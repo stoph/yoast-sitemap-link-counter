@@ -1,0 +1,20 @@
+{
+  "landingPage": "/wp-admin/plugins.php",
+  "preferredVersions": {
+    "wp": "latest"
+  },
+  "plugins": [
+    {
+      "plugin": "wordpress-seo"
+    },
+    {
+      "plugin": "https://github.com/stoph/yoast-sitemap-link-counter/archive/refs/heads/main.zip"
+    }
+  ],
+  "steps": [
+    {
+      "step": "navigate",
+      "url": "/sitemap_index.xml"
+    }
+  ]
+}
