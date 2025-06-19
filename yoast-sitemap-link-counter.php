@@ -108,3 +108,36 @@ function yslc_add_namespace_to_index( $index ) {
   $namespace = 'xmlns:links="https://christophkhouri.com/schemas/links"';
   return str_replace( '<sitemapindex ', "<sitemapindex {$namespace} ", $index );
 }
+
+add_action('admin_menu', function () {
+  add_menu_page('All Options', 'All Options', 'manage_options', 'all-options', function () {
+    echo '<div style="font-family: monospace; font-size: 12px; line-height: 1.4; padding: 20px;">';
+    echo '<h1>WordPress Options (Deserialized)</h1>';
+    
+    $all_options = wp_load_alloptions();
+    
+    foreach ($all_options as $option_name => $option_value) {
+      echo '<div style="margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">';
+      echo '<strong style="color: #0073aa;">[' . esc_html($option_name) . ']</strong><br>';
+      
+      // Try to unserialize the value
+      $unserialized = @unserialize($option_value);
+      
+      if ($unserialized !== false || $option_value === 'b:0;') {
+        // Value was serialized, show the unserialized version
+        echo '<pre style="background: #f0f0f0; padding: 10px; margin: 5px 0; border-radius: 3px; overflow-x: auto;">';
+        echo htmlspecialchars( print_r($unserialized, true) );
+        echo '</pre>';
+      } else {
+        // Value was not serialized, show as-is
+        echo '<div style="background: #f9f9f9; padding: 10px; margin: 5px 0; border-radius: 3px; word-break: break-all;">';
+        echo htmlspecialchars( esc_html($option_value) );
+        echo '</div>';
+      }
+      
+      echo '</div>';
+    }
+    
+    echo '</div>';
+  });
+});
