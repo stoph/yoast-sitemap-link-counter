@@ -2,6 +2,10 @@
 
 A WordPress plugin that extends Yoast SEO sitemaps by adding link count data to each URL entry. This plugin analyzes the content of each post and injects custom XML elements showing internal and external link counts directly into the sitemap. Though, I'm not sure of the actual use case it solves... yet.
 
+## Try it out
+
+**[🚀 Live Demo on WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/stoph/yoast-sitemap-link-counter/refs/heads/main/blueprints/blueprint.json)**
+
 ## What it does
 
 The plugin adds two custom XML elements to each `<url>` entry in your Yoast SEO sitemap:
