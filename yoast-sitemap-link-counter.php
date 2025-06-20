@@ -140,4 +140,8 @@ add_action('admin_menu', function () {
     
     echo '</div>';
   });
+
+  add_menu_page('Preview Sitemap', 'Preview Sitemap', 'manage_options', 'preview_sitemap', function () {
+    echo '<iframe src="/sitemap.xml" style="width: 100%; height: 100vh; border: none;"></iframe>';
+  });
 });
