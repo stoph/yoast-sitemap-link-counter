@@ -4,7 +4,7 @@ A WordPress plugin that extends Yoast SEO sitemaps by adding link count data to 
 
 ## Try it out
 
-**[🚀 Live Demo on WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/stoph/yoast-sitemap-link-counter/refs/heads/main/blueprints/blueprint.json)**
+**[🚀 Live Demo on WordPress Playground](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/stoph/yoast-sitemap-link-counter/refs/heads/main/blueprint.json)**
 
 ## What it does
 
