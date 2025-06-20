@@ -1,0 +1,61 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "login": true,
+  "features": {
+    "networking": true
+  },
+  "landingPage": "/wp-admin/",
+  "steps": [
+    {
+      "step": "resetData"
+    },
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "wordpress.org/plugins",
+        "slug": "wordpress-seo"
+      },
+      "options": {
+        "activate": true
+      }
+    },
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "caption": "Installing Yoast Sitemap Link Counter",
+        "resource": "url",
+        "url": "https://github.com/stoph/yoast-sitemap-link-counter/archive/refs/heads/main.zip"
+      },
+      "options": {
+        "activate": true
+      }
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php require_once 'wp-load.php'; update_option('blogname', 'Link Counter Demo - ' . date('H:i:s')); ?>"
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php require_once 'wp-load.php'; if (class_exists('Yoast\\WP\\SEO\\Integrations\\Indexing_Integration')) { Yoast\\WP\\SEO\\Integrations\\Indexing_Integration::get_instance()->index(); } ?>"
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php require_once 'wp-load.php'; copy(WP_CONTENT_DIR . '/plugins/yoast-sitemap-link-counter-main/css/main-sitemap.xsl', WP_CONTENT_DIR . '/plugins/wordpress-seo/css/main-sitemap.xsl'); ?>"
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php require_once 'wp-load.php'; $wpseo_options = get_option('wpseo'); $wpseo_options['should_redirect_after_install_free'] = false; $wpseo_options['dismiss_configuration_workout_notice'] = true; update_option('wpseo', $wpseo_options); ?>"
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php require_once 'wp-load.php'; error_log('WP_CONTENT_DIR: ' . WP_CONTENT_DIR); $plugins_dir = WP_CONTENT_DIR . '/plugins'; error_log('Plugins dir exists: ' . (is_dir($plugins_dir) ? 'YES' : 'NO')); if (is_dir($plugins_dir)) { $all_plugins = scandir($plugins_dir); error_log('All plugins: ' . print_r($all_plugins, true)); foreach ($all_plugins as $plugin) { if (strpos($plugin, 'yoast') !== false) { error_log('Found Yoast-related plugin: ' . $plugin); } } } ?>"
+    },
+    {
+      "step": "importWxr",
+      "file": {
+        "resource": "url",
+        "url": "https://christophkhouri.com/wpvip/link-count/200-posts-with-links.xml"
+      }
+    }
+  ]
+}
