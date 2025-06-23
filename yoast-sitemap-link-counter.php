@@ -142,6 +142,22 @@ add_action('admin_menu', function () {
   });
 
   add_menu_page('Preview Sitemap', 'Preview Sitemap', 'manage_options', 'preview_sitemap', function () {
-    echo '<iframe src="/sitemap.xml" style="width: 100%; height: 100vh; border: none;"></iframe>';
+    echo '<div style="padding: 20px;">';
+    echo '<h1>Raw Sitemap XML Source</h1>';
+    
+    // Get the sitemap XML content
+    $sitemap_url = home_url('/post-sitemap.xml');
+    $response = wp_remote_get($sitemap_url);
+    
+    if (is_wp_error($response)) {
+      echo '<p style="color: red;">Error fetching sitemap: ' . $response->get_error_message() . '</p>';
+    } else {
+      $xml_content = wp_remote_retrieve_body($response);
+      echo '<pre style="background: #f5f5f5; padding: 15px; border: 1px solid #ddd; overflow-x: auto; white-space: pre-wrap; font-family: monospace; font-size: 12px;">';
+      echo htmlspecialchars($xml_content);
+      echo '</pre>';
+    }
+    
+    echo '</div>';
   });
 });

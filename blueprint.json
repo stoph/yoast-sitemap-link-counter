@@ -54,7 +54,7 @@
       "step": "importWxr",
       "file": {
         "resource": "url",
-        "url": "https://christophkhouri.com/wpvip/link-count/200-posts-with-links.xml"
+        "url": "https://christophkhouri.com/wpvip/link-count/posts-with-links.xml"
       }
     }
   ]
