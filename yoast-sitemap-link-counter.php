@@ -33,34 +33,68 @@ function yslc_add_link_counts_to_sitemap( $output, $url ) {
         return $output;
     }
     
-    // Count links
-    $link_counts = yslc_count_links( $content );
+    // Count links and get URLs
+    $link_data = yslc_count_links( $content );
     
     // Build custom XML elements
     $custom_elements = sprintf(
-        "\t\t<links:internal>%d</links:internal>\n\t\t<links:external>%d</links:external>\n",
-        $link_counts['internal'],
-        $link_counts['external']
+        "\t\t<links:internal>%d</links:internal>\n",
+        $link_data['internal_count']
     );
+    
+    // Add internal links list
+    if ( ! empty( $link_data['internal_urls'] ) ) {
+        $custom_elements .= "\t\t<links:internalList>\n";
+        foreach ( $link_data['internal_urls'] as $internal_url ) {
+            $custom_elements .= sprintf(
+                "\t\t\t<links:url>%s</links:url>\n",
+                esc_html( $internal_url )
+            );
+        }
+        $custom_elements .= "\t\t</links:internalList>\n";
+    }
+    
+    $custom_elements .= sprintf(
+        "\t\t<links:external>%d</links:external>\n",
+        $link_data['external_count']
+    );
+    
+    // Add external links list
+    if ( ! empty( $link_data['external_urls'] ) ) {
+        $custom_elements .= "\t\t<links:externalList>\n";
+        foreach ( $link_data['external_urls'] as $external_url ) {
+            $custom_elements .= sprintf(
+                "\t\t\t<links:url>%s</links:url>\n",
+                esc_html( $external_url )
+            );
+        }
+        $custom_elements .= "\t\t</links:externalList>\n";
+    }
     
     // Insert before closing </url> tag
     return str_replace( "\t</url>\n", $custom_elements . "\t</url>\n", $output );
 }
 
 /**
- * Count internal and external links in content
+ * Count internal and external links in content and return URLs
  */
 function yslc_count_links( $content ) {
     // Get all links
     preg_match_all( '/<a[^>]+href=["\']([^"\']+)["\'][^>]*>/i', $content, $matches );
     
     if ( empty( $matches[1] ) ) {
-        return [ 'internal' => 0, 'external' => 0, 'total' => 0 ];
+        return [
+            'internal_count' => 0,
+            'external_count' => 0,
+            'total' => 0,
+            'internal_urls' => [],
+            'external_urls' => []
+        ];
     }
     
     $home_domain = wp_parse_url( home_url(), PHP_URL_HOST );
-    $internal = 0;
-    $external = 0;
+    $internal_urls = [];
+    $external_urls = [];
     
     foreach ( $matches[1] as $href ) {
         // Skip anchors, javascript, mailto, etc.
@@ -71,25 +105,32 @@ function yslc_count_links( $content ) {
             continue;
         }
         
-        // Handle relative URLs
+        // Handle relative URLs - convert to absolute
         if ( strpos( $href, '//' ) === false ) {
-            $internal++;
+            $absolute_url = home_url( $href );
+            $internal_urls[] = $absolute_url;
             continue;
         }
         
         // Check domain for absolute URLs
         $link_domain = wp_parse_url( $href, PHP_URL_HOST );
         if ( $link_domain === $home_domain ) {
-            $internal++;
+            $internal_urls[] = $href;
         } else {
-            $external++;
+            $external_urls[] = $href;
         }
     }
     
+    // Remove duplicates
+    $internal_urls = array_unique( $internal_urls );
+    $external_urls = array_unique( $external_urls );
+    
     return [
-        'internal' => $internal,
-        'external' => $external,
-        'total' => $internal + $external
+        'internal_count' => count( $internal_urls ),
+        'external_count' => count( $external_urls ),
+        'total' => count( $internal_urls ) + count( $external_urls ),
+        'internal_urls' => array_values( $internal_urls ),
+        'external_urls' => array_values( $external_urls )
     ];
 }
 
